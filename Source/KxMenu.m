@@ -162,9 +162,6 @@ typedef enum {
     
 } KxMenuViewArrowDirection;
 
-@interface KxMenu()
-@property(nonatomic, copy) void (^completion)(NSInteger);
-@end
 
 @implementation KxMenu {
     
@@ -479,10 +476,6 @@ typedef enum {
             maxImageWidth = imageSize.width;        
     }
     
-    if (maxImageWidth) {
-        maxImageWidth += kMarginX;
-    }
-    
     for (KxMenuItem *menuItem in _menuItems) {
 
         const CGSize titleSize = [menuItem.title sizeWithAttributes:@{NSFontAttributeName: titleFont}];
@@ -501,11 +494,11 @@ typedef enum {
     maxItemWidth  = MAX(maxItemWidth, kMinMenuItemWidth);
     maxItemHeight = MAX(maxItemHeight, kMinMenuItemHeight);
 
-    const CGFloat titleX = kMarginX * 2 + maxImageWidth;
+    const CGFloat titleX = kMarginX + maxImageWidth;
     const CGFloat titleWidth = maxItemWidth - titleX - kMarginX * 2;
     
     UIImage *selectedImage = [self selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
-    UIImage *gradientLine = [KxMenu gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 1}];
+    UIImage *gradientLine = [KxMenu gradientLine: (CGSize){maxItemWidth - kMarginX * 2, 1}];
     
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
     contentView.autoresizingMask = UIViewAutoresizingNone;
@@ -552,9 +545,9 @@ typedef enum {
             if (!menuItem.enabled && !menuItem.image) {
                 
                 titleFrame = (CGRect){
-                    kMarginX * 2,
+                    kMarginX,
                     kMarginY,
-                    maxItemWidth - kMarginX * 4,
+                    maxItemWidth - kMarginX * 2,
                     maxItemHeight - kMarginY * 2
                 };
                 
@@ -581,7 +574,7 @@ typedef enum {
         
         if (menuItem.image) {
             
-            const CGRect imageFrame = {kMarginX * 2, kMarginY, maxImageWidth, maxItemHeight - kMarginY * 2};
+            const CGRect imageFrame = {kMarginX, kMarginY, maxImageWidth, maxItemHeight - kMarginY * 2};
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageFrame];
             imageView.image = menuItem.image;
             imageView.clipsToBounds = YES;
@@ -593,7 +586,7 @@ typedef enum {
         if (itemNum < _menuItems.count - 1) {
             
             UIImageView *gradientView = [[UIImageView alloc] initWithImage:gradientLine];
-            gradientView.frame = (CGRect){kMarginX * 2, maxItemHeight + 1, gradientLine.size};
+            gradientView.frame = (CGRect){kMarginX, maxItemHeight + 1, gradientLine.size};
             gradientView.contentMode = UIViewContentModeLeft;
             [itemView addSubview:gradientView];
             

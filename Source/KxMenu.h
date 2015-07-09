@@ -64,6 +64,7 @@
 @property (readwrite, nonatomic, strong) NSArray *menuItems;
 @property (readwrite, nonatomic) BOOL blurredBackground;
 @property (readwrite, nonatomic, strong) Class overlayClass;
+@property(nonatomic, copy) void (^completion)(NSInteger);
 
 + (instancetype) showMenuInView:(UIView *)view
                        fromRect:(CGRect)rect
