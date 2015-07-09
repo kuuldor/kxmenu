@@ -33,6 +33,7 @@
 
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @interface KxMenuItem : NSObject
 
@@ -47,6 +48,9 @@
                     image:(UIImage *) image
                    target:(id)target
                    action:(SEL) action;
+
+- (instancetype) initWithTitle:(NSString *) title
+                    image:(UIImage *) image;
 
 @end
 
@@ -64,6 +68,11 @@
 + (instancetype) showMenuInView:(UIView *)view
                        fromRect:(CGRect)rect
                       menuItems:(NSArray *)menuItems;
+
++ (instancetype) showMenuInView:(UIView *)view
+                       fromRect:(CGRect)rect
+                      menuItems:(NSArray *)menuItems
+                     completion:(void (^)(NSInteger)) completion;
 
 - (void) showMenuInView:(UIView *)view
                fromRect:(CGRect)rect;

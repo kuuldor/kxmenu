@@ -95,6 +95,20 @@ const CGFloat kArrowSize = 12.f;
                              action:action];
 }
 
+- (instancetype) initWithTitle:(NSString *) title
+                    image:(UIImage *) image
+{
+    NSParameterAssert(title.length || image);
+    
+    self = [super init];
+    if (self) {        
+        _title = title;
+        _image = image;
+    }
+    return self;
+}
+
+
 - (id) init:(NSString *) title
       image:(UIImage *) image
      target:(id)target
@@ -115,7 +129,8 @@ const CGFloat kArrowSize = 12.f;
 
 - (BOOL) enabled
 {
-    return _target != nil && _action != NULL;
+    return YES;
+//    return _target != nil && _action != NULL;
 }
 
 - (void) performAction
@@ -146,6 +161,10 @@ typedef enum {
     KxMenuViewArrowDirectionRight,
     
 } KxMenuViewArrowDirection;
+
+@interface KxMenu()
+@property(nonatomic, copy) void (^completion)(NSInteger);
+@end
 
 @implementation KxMenu {
     
@@ -356,11 +375,11 @@ typedef enum {
     
     [self setNeedsDisplay];
     
-    [UIView animateWithDuration:0.2
+    self.frame = toFrame;
+    [UIView animateWithDuration:0.02
                      animations:^(void) {
                          
                          self.alpha = 1.0f;
-                         self.frame = toFrame;
                          
                      } completion:^(BOOL completed) {
                          
@@ -376,6 +395,11 @@ typedef enum {
 
 - (void)dismissMenu:(BOOL) animated
 {
+    if (self.completion) {
+        self.completion(-1);
+        self.completion = nil;
+    }
+    
     if (!self.superview) {
         return;
     }
@@ -414,11 +438,17 @@ typedef enum {
 
 - (void)performAction:(id)sender
 {
-    [self dismissMenu:YES];
     
     UIButton *button = (UIButton *)sender;
-    KxMenuItem *menuItem = _menuItems[button.tag];
-    [menuItem performAction];
+    if (self.completion == nil) {
+        KxMenuItem *menuItem = _menuItems[button.tag];
+        [menuItem performAction];
+    } else {
+        self.completion(button.tag);
+        self.completion = nil;
+    }
+
+    [self dismissMenu:YES];
 }
 
 - (UIView *) mkContentView
@@ -455,7 +485,7 @@ typedef enum {
     
     for (KxMenuItem *menuItem in _menuItems) {
 
-        const CGSize titleSize = [menuItem.title sizeWithFont:titleFont];
+        const CGSize titleSize = [menuItem.title sizeWithAttributes:@{NSFontAttributeName: titleFont}];
         const CGSize imageSize = menuItem.image.size;
 
         const CGFloat itemHeight = MAX(titleSize.height, imageSize.height) + kMarginY * 2;
@@ -862,6 +892,21 @@ typedef enum {
 {
     KxMenu *menu = [[self alloc] init];
     menu.menuItems = menuItems;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // it allows to tune parameters before showing menu
+        [menu showMenuInView:view fromRect:rect];
+    });
+    return menu;
+}
+
++ (instancetype) showMenuInView:(UIView *)view
+                       fromRect:(CGRect)rect
+                      menuItems:(NSArray *)menuItems
+                     completion:(void (^)(NSInteger)) completion
+{
+    KxMenu *menu = [[self alloc] init];
+    menu.menuItems = menuItems;
+    menu.completion = completion;
     dispatch_async(dispatch_get_main_queue(), ^{
         // it allows to tune parameters before showing menu
         [menu showMenuInView:view fromRect:rect];
