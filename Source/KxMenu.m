@@ -96,7 +96,8 @@ const CGFloat kArrowSize = 12.f;
 }
 
 - (instancetype) initWithTitle:(NSString *) title
-                    image:(UIImage *) image
+                         image:(UIImage *) image
+                       handler:(void(^)()) handler
 {
     NSParameterAssert(title.length || image);
     
@@ -104,6 +105,7 @@ const CGFloat kArrowSize = 12.f;
     if (self) {        
         _title = title;
         _image = image;
+        _handler = handler;
     }
     return self;
 }
@@ -129,8 +131,7 @@ const CGFloat kArrowSize = 12.f;
 
 - (BOOL) enabled
 {
-    return YES;
-//    return _target != nil && _action != NULL;
+    return (_target != nil && _action != NULL) || (_handler != nil);
 }
 
 - (void) performAction
@@ -140,6 +141,8 @@ const CGFloat kArrowSize = 12.f;
     if (target && [target respondsToSelector:_action]) {
         
         [target performSelectorOnMainThread:_action withObject:self waitUntilDone:YES];
+    } else if (_handler) {
+        _handler();
     }
 }
 
@@ -437,10 +440,11 @@ typedef enum {
 {
     
     UIButton *button = (UIButton *)sender;
-    if (self.completion == nil) {
-        KxMenuItem *menuItem = _menuItems[button.tag];
-        [menuItem performAction];
-    } else {
+    
+    KxMenuItem *menuItem = _menuItems[button.tag];
+    [menuItem performAction];
+    
+    if (self.completion != nil) {
         self.completion(button.tag);
         self.completion = nil;
     }

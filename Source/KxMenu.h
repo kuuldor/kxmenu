@@ -43,6 +43,7 @@
 @property (readwrite, nonatomic) SEL action;
 @property (readwrite, nonatomic, strong) UIColor *foreColor;
 @property (readwrite, nonatomic) NSTextAlignment alignment;
+@property (readwrite, nonatomic, copy) void (^handler)();
 
 + (instancetype) menuItem:(NSString *) title
                     image:(UIImage *) image
@@ -50,7 +51,8 @@
                    action:(SEL) action;
 
 - (instancetype) initWithTitle:(NSString *) title
-                    image:(UIImage *) image;
+                    image:(UIImage *) image
+                       handler:(void(^)()) handler;
 
 @end
 
