@@ -542,6 +542,8 @@ typedef enum {
             [itemView addSubview:button];
         }
         
+        UIColor * foreColor = menuItem.foreColor ? menuItem.foreColor : (self.titleColor ? self.titleColor : [UIColor whiteColor]);
+        
         if (menuItem.title.length) {
             
             CGRect titleFrame;
@@ -569,7 +571,7 @@ typedef enum {
             titleLabel.text = menuItem.title;
             titleLabel.font = titleFont;
             titleLabel.textAlignment = menuItem.alignment;
-            titleLabel.textColor = menuItem.foreColor ? menuItem.foreColor : [UIColor whiteColor];
+            titleLabel.textColor = foreColor;
             titleLabel.backgroundColor = [UIColor clearColor];
             titleLabel.autoresizingMask = UIViewAutoresizingNone;
             //titleLabel.backgroundColor = [UIColor greenColor];
@@ -580,10 +582,11 @@ typedef enum {
             
             const CGRect imageFrame = {kMarginX, kMarginY, maxImageWidth, maxItemHeight - kMarginY * 2};
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:imageFrame];
-            imageView.image = menuItem.image;
+            imageView.image = [menuItem.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
             imageView.clipsToBounds = YES;
             imageView.contentMode = UIViewContentModeCenter;
             imageView.autoresizingMask = UIViewAutoresizingNone;
+            imageView.tintColor = foreColor;
             [itemView addSubview:imageView];
         }
         

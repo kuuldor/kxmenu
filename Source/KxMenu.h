@@ -59,6 +59,7 @@
 @interface KxMenu : UIView
 
 @property (readwrite, nonatomic, strong) UIFont  *titleFont;
+@property (readwrite, nonatomic, strong) UIColor *titleColor;
 @property (readwrite, nonatomic, strong) UIColor *tintColor;
 @property (readwrite, nonatomic, strong) UIColor *tintColor1;
 @property (readwrite, nonatomic, strong) UIColor *selectedColor;
