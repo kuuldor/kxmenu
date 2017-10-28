@@ -97,7 +97,7 @@ const CGFloat kArrowSize = 12.f;
 
 - (instancetype) initWithTitle:(NSString *) title
                          image:(UIImage *) image
-                       handler:(void(^)()) handler
+                       handler:(void(^)(void)) handler
 {
     NSParameterAssert(title.length || image);
     
